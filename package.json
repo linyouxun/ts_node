@@ -1,0 +1,25 @@
+{
+  "name": "ts-node-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "createDb": "node dist/script/createDb",
+    "start": "nodemon dist/index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.7.0",
+    "koa-body": "3",
+    "koa-router": "^7.4.0",
+    "mysql2": "^1.6.5",
+    "node-fetch": "^2.3.0",
+    "nodemon": "^1.18.10",
+    "reflect-metadata": "^0.1.13",
+    "sequelize": "^4.42.0",
+    "sequelize-typescript": "^0.6.7",
+    "types": "^0.1.1"
+  }
+}
