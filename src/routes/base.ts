@@ -1,4 +1,3 @@
-
 const { ERRORCODE } = require('../utils/const');
 
 export const returnData = async( ctx, next, result, message, code, stutasCode) => {
