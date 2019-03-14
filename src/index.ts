@@ -19,6 +19,6 @@ const app = new Koa();
         ctx.body = '访问错误'
     })
     app.listen(3002, () => {
-        console.log('start the server: http://127.0.0.1:3000');
+        console.log('start the server: http://127.0.0.1:3002');
     })
 })()
