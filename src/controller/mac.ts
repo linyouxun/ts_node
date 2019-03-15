@@ -17,7 +17,7 @@ export async function macList(ctx, next, params) {
     const sqlStr = `
         SELECT m.id as id, mac, create_time AS createTime, capture_time AS captureTime, shop_id AS shopId from mac_data as m 
         right join (
-            select id from mac_data limit ${params.limit * params.cursor}, ${params.limit}
+            select id from mac_data order by id limit ${params.limit * (params.cursor - 1)}, ${params.limit}
         ) as t 
         on m.id = t.id;
     `;
