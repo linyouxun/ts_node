@@ -1,5 +1,38 @@
 export const GAODE_KEY = 'f1f341fd8aa165eda6c0f29db0f5ef5d'
 export const WX_TOKEN = 'yoju';
+// 个人
+// export const WX_APPID = 'wx6b4513a726c562bf';
+// export const WX_SECRET = 'd4638d32493919f85a274582dbbeb690';
+// 测试
+export const WX_APPID = 'wx8447a832a5a9ebb9';
+export const WX_SECRET = '55c82af3736a7182ffe09a012b64ff04';
+export const WX_SERVER = 'https://api.weixin.qq.com';
+export const redisParams = {
+    host: '120.78.174.98',
+    port: '6379',
+    password: '123456l'
+}
+/**
+ * 100// 高德地图appkey
+ * 100——客户必须继续发出请求
+ * 101——客户要求服务器根据请求转换HTTP协议版本
+ *
+ * 200
+ * 200——表明该请求被成功地完成，所请求的资源发送回客户端
+ * 201——提示知道新文件的URL
+ * 202——接受和处理、但处理未完成
+ * 203——返回信息不确定或不完整
+ * 204——请求收到，但返回信息为空
+ * 205——服务器完成了请求，用户代理必须复位当前已经浏览过的文件
+ * 206——服务器已经完成了部分用户的GET请求
+ *
+ * 300
+export const WX_SERVER = 'https://api.weixin.qq.com';
+export const redisParams = {
+    host: '120.78.174.98',
+    port: '6379',
+    password: '123456l'
+}
 /**
  * 100// 高德地图appkey
  * 100——客户必须继续发出请求

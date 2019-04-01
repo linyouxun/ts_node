@@ -1,12 +1,23 @@
 import * as Koa from 'koa';
 import { sequelize } from './sequelizeConfig';
-import { ipconfig, commonHeaders, commonError} from './middleware/common';
+import { redisConfig, ipconfig, commonHeaders, commonError} from './middleware/common';
 import router from './routes';
 import * as koaBody from 'koa-body';
+import * as redisStore from 'koa-redis';
+import * as session from 'koa-generic-session';
+import { redisParams as config } from './utils/const';
+
 
 const app = new Koa();
+
+app.use(session({
+  store: redisStore(config)
+}));
+
 (async () => {
     await sequelize.sync({force: false});   
+    // redis
+    app.use(redisConfig);
     // 查看远程IP地址
     app.use(ipconfig);
     // 设置头

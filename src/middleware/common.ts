@@ -1,5 +1,15 @@
 import { ERRORCODE } from '../utils/const';
+import * as redis from 'redis';
+import { redisParams } from '../utils/const';
+import { promisify } from 'util';
 
+export const redisConfig = async (ctx, next) => {
+  const client = redis.createClient(redisParams) || {};
+  const getAsync = promisify(client.get).bind(client);
+  client.getAsync = getAsync;
+  ctx.redis = client;
+  await next();
+}
 export const ipconfig = async (ctx, next) => {
   ctx.ipv4 = ctx.req.headers['x-real-ip'] || '58.62.203.182';
   await next();
