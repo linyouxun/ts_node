@@ -3,12 +3,12 @@ import { logger } from './utils/log';
 
 export const sequelize = new Sequelize({
     dialect: 'mysql',
-    host: '121.41.58.94',
-    port: 3307,
+    host: '120.78.174.98',
+    port: 3306,
     operatorsAliases: true,
     database: 'intelligent',
-    username: 'yunwei',
-    password: '!@#_20150414',
+    username: 'root',
+    password: '1qaz@WSX',
     modelPaths: [__dirname + '/models'],
     logging: function(sql) {
         console.log(sql);

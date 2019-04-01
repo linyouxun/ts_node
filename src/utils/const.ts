@@ -1,5 +1,5 @@
 export const GAODE_KEY = 'f1f341fd8aa165eda6c0f29db0f5ef5d'
-
+export const WX_TOKEN = 'yoju';
 /**
  * 100// 高德地图appkey
  * 100——客户必须继续发出请求

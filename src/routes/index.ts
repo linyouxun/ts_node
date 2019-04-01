@@ -2,6 +2,7 @@ import * as Router from 'koa-router';
 import { pageCount, pageList } from '../controller/index';
 import { macList, macList2, macList3 } from '../controller/mac';
 import { failed } from './base';
+import { checkToken } from '../utils/tool';
 const router = new Router();
 
 router.get('/page/count', async (ctx, next) => {
@@ -100,6 +101,25 @@ router.get('/mac/list3', async (ctx, next) => {
     return await macList3(ctx, next, params);
 });
 
+router.get('/wx/token', async(ctx, next) => {
+    const {signature, timestamp, nonce, echostr} = ctx.query;
+    if (!signature) {
+        return failed(ctx, next, 'signature参数错误');
+    }
+    if (!timestamp) {
+        return failed(ctx, next, 'timestamp参数错误');
+    }
+    if (!nonce) {
+        return failed(ctx, next, 'nonce参数错误');
+    }
+    if (!echostr) {
+        return failed(ctx, next, 'echostr参数错误');
+    }
+    if (checkToken(signature, timestamp, nonce)) {
+        return ctx.body = echostr;
+    } 
+    return ctx.body = '校验错误';
+})
 
 export default router;
   
