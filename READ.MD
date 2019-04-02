@@ -1,0 +1,1 @@
+curl -F media=@1.mp4 "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=20_uq6ojNUEYfgx49caMGm3LFRvCfeONgJccnWQVFC9Vsp515VffsS4WyRbMB6EBCjZ8FoYB-l0aH20UtP6F4pXRQyi3ejd1tSLVuRo7zruoBImsJPr0G3euUNyWrUGGHcAIALLM&type=video"

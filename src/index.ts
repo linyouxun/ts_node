@@ -1,6 +1,6 @@
 import * as Koa from 'koa';
 import { sequelize } from './sequelizeConfig';
-import { redisConfig, ipconfig, commonHeaders, commonError} from './middleware/common';
+import { redisConfig, xmlConfig, ipconfig, commonHeaders, commonError} from './middleware/common';
 import router from './routes';
 import * as koaBody from 'koa-body';
 import * as redisStore from 'koa-redis';
@@ -18,6 +18,8 @@ app.use(session({
     await sequelize.sync({force: false});   
     // redis
     app.use(redisConfig);
+    // xml 
+    app.use(xmlConfig);
     // 查看远程IP地址
     app.use(ipconfig);
     // 设置头

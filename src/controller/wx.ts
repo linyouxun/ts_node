@@ -1,10 +1,9 @@
 import * as moment from 'moment';
-import { success, failed } from '../routes/base';
 import { fetchData } from '../utils/request';
 import { WX_APPID, WX_SECRET, WX_SERVER } from '../utils/const';
+import { wxImage, wxText, wxVoice, wxVideo, wxMusic, wxNews, wxLink } from '../utils/wxMsg';
 
-export const getToken = async function(ctx, next) {
-    const { refresh } = ctx.query;
+export const getToken = async function(ctx, refresh = null) {
     let obj = {} as any;
     try {
         obj = await ctx.redis.getAsync('token');
@@ -12,7 +11,7 @@ export const getToken = async function(ctx, next) {
     } catch (error) {}
     const time = +new Date();
     // 失效分钟
-    const deadMinute = 119;
+    const deadMinute = 15;
     // 1:45小时失效
     if (!obj.time || !obj.token || (time > obj.time) || !!refresh) {
         const res = await fetchData({
@@ -29,11 +28,81 @@ export const getToken = async function(ctx, next) {
             }
             ctx.redis.set('token', JSON.stringify(obj));
         } else {
-            return failed(ctx, next, res)
+            return res;
         }
     }
     obj.refreshTime = moment(obj.time || time).format('YYYY-MM-DD HH:mm:ss');
     obj.deadLine = moment(obj.time + deadMinute * 60 * 1000).format('YYYY-MM-DD HH:mm:ss');
     obj.currentTime = moment(time).format('YYYY-MM-DD HH:mm:ss');
-    return success(ctx, next, obj);
+    return obj;
+}
+
+export const getTokenPost = function(ctx) {
+    const json = ctx.xmlBody.xml;
+    let xml = '';
+    // console.log(json);
+    // console.log(json.MsgType.join(''));
+    switch(json.MsgType.join('')) {
+        case 'text': {
+            xml = wxText(Object.assign(json))
+            // xml = wxNews(Object.assign(json))
+            break;
+        }
+        case 'image': {
+            xml = wxImage(Object.assign(json))
+            break;
+        }
+        case 'news': {
+            xml = wxNews(Object.assign(json))
+            break;
+        }
+        case 'voice': {
+            xml = wxVoice(Object.assign(json))
+            break;
+        }
+        case 'video': {
+            xml = wxVideo(Object.assign(json))
+            // xml = wxText(Object.assign(json, {MsgType: 'text', Content: '不能识别您发送的信息'}))
+            break;
+        }
+        case 'music': {
+            xml = wxMusic(Object.assign(json))
+            break;
+        }
+        case 'video': {
+            xml = wxVideo(Object.assign(json))
+            break;
+        }
+        case 'link': {
+            xml = wxLink(Object.assign(json));
+            break;
+        }
+        case 'event': {
+            xml = eventSwitch(Object.assign(json));
+            break;
+        }
+        default: {
+            xml = wxText(Object.assign(json, {MsgType: 'text', Content: '不能识别您发送的信息'}))
+        }
+    }
+    return xml;
+}
+
+const eventSwitch = function(json): string {
+    console.log(json)
+    switch(json.Event.join('')) {
+        case 'subscribe': {
+            return wxText(Object.assign(json, {MsgType: 'text', Content: '公众号欢迎你'}))
+        }
+        case 'unsubscribe': {
+            return wxText(Object.assign(json, {MsgType: 'text', Content: '你离开了公众号'}))
+        }
+        // case 'subscribe': {
+        //     break;
+        // }
+        default: {
+            break;
+        }
+    }
+    return '';
 }

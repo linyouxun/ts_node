@@ -1,6 +1,6 @@
-import { ERRORCODE } from '../utils/const';
+import { ERRORCODE, redisParams } from '../utils/const';
 import * as redis from 'redis';
-import { redisParams } from '../utils/const';
+import { xmlToJson } from '../utils/tool';
 import { promisify } from 'util';
 
 export const redisConfig = async (ctx, next) => {
@@ -8,6 +8,23 @@ export const redisConfig = async (ctx, next) => {
   const getAsync = promisify(client.get).bind(client);
   client.getAsync = getAsync;
   ctx.redis = client;
+  await next();
+}
+// 解析XML
+export const xmlConfig = async (ctx, next) => {
+  if (ctx.method == 'POST' && ctx.is('text/xml')) {
+    let buf = '';
+    const xmlstr = await new Promise(function(resolve, reject) {
+      ctx.req.on('data', (chunk) => {
+        buf += chunk;
+      })
+      ctx.req.on('end', () => {
+        resolve(buf)
+      })
+    })
+    const body = await xmlToJson(xmlstr);
+    ctx.xmlBody = body;
+  }
   await next();
 }
 export const ipconfig = async (ctx, next) => {

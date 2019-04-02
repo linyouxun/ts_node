@@ -1,7 +1,7 @@
 
-import { getToken } from '../controller/wx';
+import { getToken, getTokenPost} from '../controller/wx';
 import { checkToken } from '../utils/tool';
-import { failed } from './base';
+import { failed, success } from './base';
 import router from './router';
 
 /**
@@ -27,6 +27,15 @@ router.get('/wx/checktoken', async(ctx, next) => {
     return ctx.body = '校验错误';
 });
 
+router.post('/wx/checktoken', async(ctx, next) => {
+    const xml = getTokenPost(ctx);
+    ctx.set('content-type', 'text/xml');
+    console.log(xml);
+    ctx.body = xml;
+})
+
 router.get('/wx/token', async(ctx, next) => {
-    return getToken(ctx, next);
+    const { refresh } = ctx.query;
+    const obj = await getToken(ctx, refresh);
+    success(ctx, next, obj);
 })
