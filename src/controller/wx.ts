@@ -6,8 +6,8 @@ import { wxImage, wxText, wxVoice, wxVideo, wxMusic, wxNews, wxLink } from '../u
 export const getToken = async function(ctx, refresh = null) {
     let obj = {} as any;
     try {
-        obj = await ctx.redis.getAsync('token');
-        obj = JSON.parse(obj);
+        obj = await ctx.redis.getAsync(WX_APPID);
+        obj = JSON.parse(obj) || {};
     } catch (error) {}
     const time = +new Date();
     // 失效分钟
@@ -26,7 +26,7 @@ export const getToken = async function(ctx, refresh = null) {
                 token: res.access_token,
                 time: time + (res.expires_in - deadMinute * 60) * 1000
             }
-            ctx.redis.set('token', JSON.stringify(obj));
+            ctx.redis.set(WX_APPID, JSON.stringify(obj));
         } else {
             return res;
         }
