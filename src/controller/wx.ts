@@ -40,8 +40,7 @@ export const getToken = async function(ctx, refresh = null) {
 export const getTokenPost = function(ctx) {
     const json = ctx.xmlBody.xml;
     let xml = '';
-    // console.log(json);
-    // console.log(json.MsgType.join(''));
+    console.log(json)
     switch(json.MsgType.join('')) {
         case 'text': {
             xml = wxText(Object.assign(json))
@@ -89,13 +88,22 @@ export const getTokenPost = function(ctx) {
 }
 
 const eventSwitch = function(json): string {
-    console.log(json)
     switch(json.Event.join('')) {
         case 'subscribe': {
             return wxText(Object.assign(json, {MsgType: 'text', Content: '公众号欢迎你'}))
         }
         case 'unsubscribe': {
             return wxText(Object.assign(json, {MsgType: 'text', Content: '你离开了公众号'}))
+        }
+        // 模板发送成功
+        case 'TEMPLATESENDJOBFINISH': {
+            if(json.Status.join('') === 'success') {
+                console.log('模板消息发送成功');
+            } else if(json.Status.join('') === 'failed: system failed') {
+                console.log('模板消息发送失败，未知原因');
+            } else {
+                console.log('模板消息发送成功，用户拒收');
+            }
         }
         // case 'subscribe': {
         //     break;
@@ -105,4 +113,16 @@ const eventSwitch = function(json): string {
         }
     }
     return '';
+}
+
+
+export const sendTemplate = async function(ctx, data) {
+    const redisToken = await getToken(ctx);
+    const res = await fetchData(data, `${WX_SERVER}/cgi-bin/message/template/send?access_token=${redisToken.token}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    return res;
 }

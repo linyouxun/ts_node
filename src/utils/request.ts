@@ -9,7 +9,7 @@ function objToUrlString(data) {
   }
   return paramsArr.join('&');
 }
-export const fetchData = function(data, url, opts) {
+export const fetchData = function(data, url, opts = { method: 'POST'} as any) {
   // 清除空参数
   for (const key in data) {
     if (data.hasOwnProperty(key)) {
@@ -19,15 +19,19 @@ export const fetchData = function(data, url, opts) {
       }
     }
   }
-  const params = Object.assign(opts,{
+  const params = Object.assign({
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
-  })
+  }, opts) as any;
   if (opts.method === 'GET') {
     url += ('?' + objToUrlString(data));
   } else {
-    params.body = objToUrlString(data);
+    if (opts.headers['Content-Type'] === 'application/json') {
+      params.body = JSON.stringify(data);
+    } else {
+      params.body = objToUrlString(data);
+    }
   }
   return myFetch(url , params).then(resp => {
     return resp.json()

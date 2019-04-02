@@ -1,5 +1,5 @@
 
-import { getToken, getTokenPost} from '../controller/wx';
+import { getToken, getTokenPost, sendTemplate} from '../controller/wx';
 import { checkToken } from '../utils/tool';
 import { failed, success } from './base';
 import router from './router';
@@ -39,3 +39,26 @@ router.get('/wx/token', async(ctx, next) => {
     const obj = await getToken(ctx, refresh);
     success(ctx, next, obj);
 })
+
+router.get('/wx/template/send', async(ctx, next) => {
+    let { openId, templateId, url = 'http://www.baidu.com', data = '{}' } = ctx.query;
+    if (!openId) {
+        return failed(ctx, next, 'openId参数错误');
+    }
+    if (!templateId) {
+        return failed(ctx, next, 'templateId参数错误');
+    }
+    try {
+        data = JSON.parse(data); 
+    } catch (error) {
+        data = {}
+    }
+    const res = await sendTemplate(ctx, {
+        "touser": openId,
+        "template_id": templateId,
+        "url": url,
+        "data": data
+    });
+    success(ctx, next, res);
+})
+
