@@ -1,5 +1,6 @@
 import router from './router';
 require('./wx');
 require('./page');
-require('./mac')
+require('./mac');
+require('./updateLog');
 export default router;

@@ -4,7 +4,7 @@ import { fetchData } from '../utils/request';
 import { GAODE_KEY } from '../utils/const';
 import Crypto from '../utils/encrypt';
 import * as parser from 'ua-parser-js';
-import Statistics from '../models/Statistics';
+import Statistics from '../models/db/Statistics';
 import Pagination from '../utils/pagination';
 import { Sequelize } from 'sequelize-typescript';
 const Op = Sequelize.Op;

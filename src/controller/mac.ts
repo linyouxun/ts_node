@@ -1,7 +1,7 @@
 
 // import * as moment from 'moment';
 import { success } from '../routes/base';
-import MacData from '../models/MacData';
+import MacData from '../models/db/MacData';
 import Pagination from '../utils/pagination';
 import { Sequelize } from 'sequelize-typescript';
 import { sequelize } from '../sequelizeConfig';
