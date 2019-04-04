@@ -8,6 +8,7 @@ export const updateAdd = async function(params) {
         createTime: +new Date(),
         updateTime: +new Date(),
         html: params.html || '',
+        title: params.title,
         userId: params.userId,
         userName: params.userName,
         accessory: params.accessory,
@@ -81,7 +82,7 @@ export const updateList = async function(params) {
     let pagination = new Pagination(total, params.cursor, params.limit);
     const list = await UpdateLog.findAll(Object.assign(
         options, {
-            attributes: ['id', 'createTime', 'updateTime', 'html', 'userName', 'userId', 'accessory', 'count', 'countBase'],
+            attributes: ['id', 'createTime', 'updateTime', 'html', 'userName', 'userId', 'accessory', 'count', 'countBase', 'title'],
             limit: params.limit,
             offset: params.limit * (params.cursor - 1),
             include: [queryInclude.UpdateLabel]

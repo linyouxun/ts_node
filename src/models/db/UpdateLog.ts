@@ -35,6 +35,8 @@ export default class UpdateLog extends Model<UpdateLog> {
     count: number;
     @Column({comment: '查看基数', field: 'count_base'})
     countBase: number;
+    @Column({comment: '标题', field: 'title', type: DataType.CHAR})
+    title: string;
     
     /**
      * 关联很蛋疼

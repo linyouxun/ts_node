@@ -1,6 +1,5 @@
 import * as Router from 'koa-router';
 import { failed, success } from './base';
-import { networkInterfaces } from 'os';
 
 const router = new Router();
 

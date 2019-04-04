@@ -1,5 +1,3 @@
-
-
 import { updateAdd, updateList } from '../controller/updateLog';
 import router from './router';
 import { success, failed } from './base';
