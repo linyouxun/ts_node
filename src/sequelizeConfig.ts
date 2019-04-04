@@ -9,7 +9,7 @@ export const sequelize = new Sequelize({
     database: 'intelligent',
     username: 'root',
     password: '1qaz@WSX',
-    modelPaths: [__dirname + '/models'],
+    modelPaths: [__dirname + '/models/db'],
     logging: function(sql) {
         console.log(sql);
         logger.info(sql);
