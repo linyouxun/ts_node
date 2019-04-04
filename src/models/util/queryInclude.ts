@@ -8,8 +8,8 @@ declare interface IQueryInclude {
 }
 
 const QueryInclude: IQueryInclude = {
-  UpdateLabel: { model: UpdateLabel, as: 'labels', attributes: { exclude: ['id'] }, required: true },
-  UpdateLog: { model: UpdateLog, as: 'logs', attributes: { exclude: ['id'] }, required: true },
+  UpdateLabel: { model: UpdateLabel, as: 'labels', attributes: { exclude: [] }, through: { attributes: [] }, required: true },
+  UpdateLog: { model: UpdateLog, as: 'logs', attributes: { exclude: ['id'] }, through: { attributes: [] }, required: true },
 }
 
 export default QueryInclude
