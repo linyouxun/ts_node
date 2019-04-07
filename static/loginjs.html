@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>login go</title>
+</head>
+<body>
+    <script>
+        var paramsArr = window.location.search.substr(1).split('&');
+        var params = {};
+        var callback = 'parent.wx.callback';
+        for(var i = 0 ; i < paramsArr.length; i++) {
+            var name = paramsArr[i].split('=')[0];
+            var value = paramsArr[i].split('=')[1];
+            if (name == 'callback') {
+                callback = value;
+            } else {
+                params[name] = value;
+            }
+        }
+        eval(callback + '(' + JSON.stringify(params) + ')');
+    </script>
+</body>
+</html>

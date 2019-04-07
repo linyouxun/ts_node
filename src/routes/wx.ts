@@ -1,8 +1,9 @@
 
-import { getToken, getTokenPost, sendTemplate} from '../controller/wx';
+import { getToken, getTokenPost, sendTemplate, getCode} from '../controller/wx';
 import { checkToken } from '../utils/tool';
 import { failed, success } from './base';
 import router from './router';
+import { WX_APPID } from '../utils/const';
 
 /**
  * 微信
@@ -59,6 +60,43 @@ router.get('/wx/template/send', async(ctx, next) => {
         "url": url,
         "data": data
     });
+    success(ctx, next, res);
+})
+
+router.get('/wx/authorize', async(ctx, next) => {
+    let { type, scope, callback , id, goback = '/loginjs.html', res = '{}'} = ctx.query;
+    const server = 'http://38c90778.ngrok.io';
+    const goUri = server + '/wx/getCode?goback=1';
+    if (type == 'wxlogin_jump') {
+        // 微信授權
+        return ctx.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${WX_APPID}&redirect_uri=${encodeURIComponent(goUri)}&response_type=code&scope=${scope}&state=STATE#wechat_redirect`);    
+    }
+    if (type == 'wxlogin_cookie') {
+        // 獲取數據
+        res = await ctx.redis.getAsync(ctx.session.token);
+        return ctx.redirect(`/loginjs.html?errNum=${1}&id=${id}&callback=${callback}&res=${encodeURIComponent(res)}`);
+    }
+    if (type == 'wxlogin_origin') {
+        // 设置值
+        try {
+            res = JSON.parse(res)
+        } catch (error) {
+        }
+        ctx.session.token = WX_APPID + '_' + res.openid;
+        ctx.redis.set(WX_APPID + '_' + res.openid, JSON.stringify(res));
+    }
+    ctx.redirect(`/login.html`);
+})
+
+router.get('/wx/getCode', async(ctx, next) => {
+    let { code, state, goback} = ctx.query;
+    if (!code) {
+        return failed(ctx, next, 'code参数错误');
+    }
+    const res = await getCode(code)
+    if(!!goback) {
+        return ctx.redirect(`/wx/authorize?type=wxlogin_origin&res=${encodeURIComponent(JSON.stringify(res))}`);    
+    }
     success(ctx, next, res);
 })
 

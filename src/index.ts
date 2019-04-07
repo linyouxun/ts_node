@@ -1,3 +1,4 @@
+import * as path from 'path';
 import * as Koa from 'koa';
 import { sequelize } from './sequelizeConfig';
 import { redisConfig, xmlConfig, ipconfig, commonHeaders, commonError} from './middleware/common';
@@ -5,14 +6,21 @@ import router from './routes';
 import * as koaBody from 'koa-body';
 import * as redisStore from 'koa-redis';
 import * as session from 'koa-generic-session';
+import * as koaStatic from 'koa-static';
 import { redisParams as config } from './utils/const';
 
 
 const app = new Koa();
 
+app.keys = ['yoju']
+
 app.use(session({
   store: redisStore(config)
 }));
+console.log('-----------------------------');
+console.log(path.resolve(__dirname , '../static'));
+app.use(koaStatic(path.resolve(__dirname , '../static')));
+
 
 (async () => {
     await sequelize.sync({force: false});   

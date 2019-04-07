@@ -40,7 +40,6 @@ export const getToken = async function(ctx, refresh = null) {
 export const getTokenPost = function(ctx) {
     const json = ctx.xmlBody.xml;
     let xml = '';
-    console.log(json)
     switch(json.MsgType.join('')) {
         case 'text': {
             xml = wxText(Object.assign(json))
@@ -115,6 +114,17 @@ const eventSwitch = function(json): string {
     return '';
 }
 
+export const getCode = async function(code) {
+    const res = await fetchData({
+        appid: WX_APPID,
+        secret: WX_SECRET,
+        code,
+        grant_type: 'authorization_code'
+    }, `${WX_SERVER}/sns/oauth2/access_token`, {
+        method: 'GET'
+    });
+    return res;
+}
 
 export const sendTemplate = async function(ctx, data) {
     const redisToken = await getToken(ctx);
