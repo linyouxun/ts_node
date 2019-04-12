@@ -9,23 +9,24 @@
     <title>Document</title>
 </head>
 <body>
+    "{\"access_token\":\"20_jS20OUOg3GXXTT3ucdrtT_f0KWLs4qg1SrESSi49wC2KThqDJM5yPQ-JWiNJhPnhgSfl48EwBcjM92rXtv0FIVg\",\"expires_in\":7200,\"refresh_token\":\"20_E1dbEzAC5Vn1n7fazxSjgxhwSumEneOvWgbeDka6ncECVfZOWNgy_S9RZUC3v8L_xl6gM_rI5kktNaxo2bPiR\",\"openid\":\"ohbyS525fs_Gc6uDC2yKBnmL81zQ\",\"scope\":\"snsapi_userinfo\"}"
     <script>
         var __WeiXinAuth = function (name) {
             this.AppName = name;
             this.prefix = "__login_pop_";
-            this.server = 'http://38c90778.ngrok.io/wx/authorize';
+            this.server = 'http://d93076bc.ngrok.io/wx/authorize';
+            this.iframeUrl = 'http://d93076bc.ngrok.io/loginjs.html';
             this.timestamp = (new Date()).getTime();
             this.status = true;
-            this.scope = 'snsapi_base';  //snsapi_base ：静默授权   snsapi_userinfo：获取用户信息
+            this.scope = 'snsapi_userinfo';  //snsapi_base ：静默授权   snsapi_userinfo：获取用户信息
             this.backurl = encodeURIComponent(location.href);
             this.beforSend = function () {
             };
             this.afterSend = function (result) {
             };
             this.callback = function (result) {
-                debugger
                 if (result.errNum == 1) {
-                    var go_url = this.server + "?type=wxlogin_jump&scope=" + this.scope + "&backurl=" + this.backurl;
+                    var go_url = this.server + "?type=wxlogin_jump&scope=" + this.scope + "&goback=" + this.backurl;
                     return location.href = go_url;
                 }
                 this.afterSend(result);
@@ -37,7 +38,7 @@
                     var protocol = window.location.protocol;
                     var domain = window.location.hostname;
                     var id = this.prefix + this.timestamp;
-                    var url = this.server + "?type=wxlogin_cookie&scope=" + this.scope + "&callback=parent." + this.AppName + ".callback&p=" + protocol + "&u=" + domain + "&t=" + this.timestamp + "&port=" + location.port;
+                    var url = this.server + "?type=wxlogin_cookie&scope=" + this.scope + "&callback=parent." + this.AppName + ".callback&goback=" + encodeURIComponent(this.iframeUrl);
                     var div = document.createElement("iframe");
                     div.setAttribute("id", id);
                     div.setAttribute("style", "display:none");
@@ -51,7 +52,13 @@
         window.wx = new __WeiXinAuth('wx');
         window.wx.send();
         window.wx.afterSend = function(res) {
-            console.log(res);
+            var jsonData = decodeURIComponent(res.res);
+            try {
+               jsonData = JSON.parse(jsonData) 
+            } catch (error) {
+                jsonData = {}
+            }
+            console.log(jsonData);
         }
     </script>
 </body>

@@ -136,3 +136,57 @@ export const sendTemplate = async function(ctx, data) {
     });
     return res;
 }
+
+// /**
+//  * 获取用户信息
+//  * @param accessToken 
+//  * @param openid 
+//  * @param lang 
+//  */
+
+// export const getWxUserInfo = async function(accessToken, openid, lang = 'zh_CN') {
+//     let res = await fetchData({
+//         access_token: accessToken,
+//         openid: openid,
+//         lang: lang
+//     }, `${WX_SERVER}/sns/userinfo`, {
+//         method: 'GET',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     });
+//     if (!!res.errcode) {
+//         accessToken = '';
+//     }
+//     return {
+//         access_token: accessToken,
+//         res
+//     };
+// }
+
+/**
+ * 检验
+ * @param accessToken 
+ * @param openid 
+ * @param lang 
+ */
+
+export const getWxUserInfo = async function(accessToken, openid, lang = 'zh_CN') {
+    let res = await fetchData({
+        access_token: accessToken,
+        openid: openid,
+        lang: lang
+    }, `${WX_SERVER}/sns/userinfo`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    if (!!res.errcode) {
+        accessToken = '';
+    }
+    return {
+        access_token: accessToken,
+        res
+    };
+}

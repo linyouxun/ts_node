@@ -1,5 +1,5 @@
 
-import { getToken, getTokenPost, sendTemplate, getCode} from '../controller/wx';
+import { getToken, getTokenPost, sendTemplate, getCode, getWxUserInfo} from '../controller/wx';
 import { checkToken } from '../utils/tool';
 import { failed, success } from './base';
 import router from './router';
@@ -31,7 +31,6 @@ router.get('/wx/checktoken', async(ctx, next) => {
 router.post('/wx/checktoken', async(ctx, next) => {
     const xml = getTokenPost(ctx);
     ctx.set('content-type', 'text/xml');
-    console.log(xml);
     ctx.body = xml;
 })
 
@@ -65,16 +64,35 @@ router.get('/wx/template/send', async(ctx, next) => {
 
 router.get('/wx/authorize', async(ctx, next) => {
     let { type, scope, callback , id, goback = '/loginjs.html', res = '{}'} = ctx.query;
-    const server = 'http://38c90778.ngrok.io';
-    const goUri = server + '/wx/getCode?goback=1';
+    const server = 'http://d93076bc.ngrok.io';
+    // console.log('log', goback, type, scope);
+    const goUri = server + '/wx/getCode?goback=' + encodeURIComponent(goback) + '&scope=' + scope;
     if (type == 'wxlogin_jump') {
         // 微信授權
         return ctx.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${WX_APPID}&redirect_uri=${encodeURIComponent(goUri)}&response_type=code&scope=${scope}&state=STATE#wechat_redirect`);    
     }
     if (type == 'wxlogin_cookie') {
         // 獲取數據
-        res = await ctx.redis.getAsync(ctx.session.token);
-        return ctx.redirect(`/loginjs.html?errNum=${1}&id=${id}&callback=${callback}&res=${encodeURIComponent(res)}`);
+        res = await ctx.redis.getAsync(ctx.session.token || 'none');
+        let errNum = 1;
+        if (!!res) {
+            // 获取用户详细信息
+            if (/snsapi_userinfo/.test(res)) {
+                try {
+                   res = JSON.parse(res) 
+                } catch (error) {
+                    res = {}
+                }            
+                const res2 = await getWxUserInfo(res.access_token, res.openid);
+                if (!!res2.access_token ) {
+                    res = JSON.stringify(res2.res);
+                    errNum = 0;
+                }
+            } else {
+                errNum = 0
+            }
+        }
+        return ctx.redirect(`${goback}?errNum=${errNum}&id=${id}&callback=${callback}&res=${encodeURIComponent(res)}`);
     }
     if (type == 'wxlogin_origin') {
         // 设置值
@@ -82,20 +100,20 @@ router.get('/wx/authorize', async(ctx, next) => {
             res = JSON.parse(res)
         } catch (error) {
         }
-        ctx.session.token = WX_APPID + '_' + res.openid;
-        ctx.redis.set(WX_APPID + '_' + res.openid, JSON.stringify(res));
+        ctx.session.token = WX_APPID + '_' + scope + '_' + res.openid;
+        ctx.redis.set(ctx.session.token, JSON.stringify(res));
     }
-    ctx.redirect(`/login.html`);
+    ctx.redirect(goback);
 })
 
 router.get('/wx/getCode', async(ctx, next) => {
-    let { code, state, goback} = ctx.query;
+    let { code, state, goback, scope} = ctx.query;
     if (!code) {
         return failed(ctx, next, 'code参数错误');
     }
     const res = await getCode(code)
     if(!!goback) {
-        return ctx.redirect(`/wx/authorize?type=wxlogin_origin&res=${encodeURIComponent(JSON.stringify(res))}`);    
+        return ctx.redirect(`/wx/authorize?type=wxlogin_origin&res=${encodeURIComponent(JSON.stringify(res))}&goback=${encodeURIComponent(goback)}&scope=${scope}`);    
     }
     success(ctx, next, res);
 })
