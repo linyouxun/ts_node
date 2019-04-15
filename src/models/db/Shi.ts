@@ -5,7 +5,7 @@ import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType } from 'seque
  * 统计
  */
 @Table({
-    charset: 'utf8',
+    charset: 'utf8mb4',
     tableName:'shi_data'
 })
 export default class Shi extends Model<Shi> {

@@ -7,7 +7,8 @@ import UpdateLogAndLabel from './UpdateLogAndLabel';
  */
 @Table({
     charset: 'utf8',
-    tableName:'update_label'
+    tableName:'update_label',
+    timestamps: true
 })
 export default class UpdateLabel extends Model<UpdateLabel> {
     @PrimaryKey
@@ -16,7 +17,6 @@ export default class UpdateLabel extends Model<UpdateLabel> {
     id: number;
     @Column({comment: '标签名字', field: 'label_name'})
     labelName: string;
-
     @BelongsToMany(() => UpdateLog, () => UpdateLogAndLabel)
     updateLog: UpdateLog[];
 }
