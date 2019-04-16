@@ -13,7 +13,7 @@ export async function publishStatus(ctx, next, params) {
         offset: params.limit * (params.cursor - 1)
     }))])
     let pagination = new Pagination(total, params.cursor, params.limit);
-    console.log(list);
+    // console.log(list);
     return success(ctx, next, {
         list,
         pagination

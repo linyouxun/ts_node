@@ -43,5 +43,4 @@ import { sushi1, sushi10, sushi11, sushi12, sushi13, sushi14, sushi15, sushi16, 
     // Shi.bulkCreate(sushi15)
     // Shi.bulkCreate(sushi16)
     // Shi.bulkCreate(sushi17)
-
 })()

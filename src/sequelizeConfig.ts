@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize-typescript';
-import { logger } from './utils/log';
+import { mysqlLogger } from './utils/log';
 
 // export const sequelize = new Sequelize({
 //     dialect: 'mysql',
@@ -26,7 +26,7 @@ export const sequelize = new Sequelize({
     modelPaths: [__dirname + '/models/db'],
     logging: function(sql) {
         console.log(sql);
-        logger.info(sql);
+        mysqlLogger.info(sql);
     }
 })
 // export const sequelize = new Sequelize({

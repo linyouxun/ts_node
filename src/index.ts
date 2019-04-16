@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as Koa from 'koa';
 import { sequelize } from './sequelizeConfig';
-import { redisConfig, xmlConfig, ipconfig, commonHeaders, commonError} from './middleware/common';
+import { redisConfig, xmlConfig, ipconfig, commonHeaders, commonError, logger} from './middleware/common';
 import router from './routes';
 import * as koaBody from 'koa-body';
 import * as redisStore from 'koa-redis';
@@ -23,7 +23,7 @@ app.use(koaStatic(path.resolve(__dirname , '../static')));
 
 
 (async () => {
-    await sequelize.sync({force: false});   
+    await sequelize.sync({force: false});
     // redis
     app.use(redisConfig);
     // xml 
@@ -33,7 +33,9 @@ app.use(koaStatic(path.resolve(__dirname , '../static')));
     // 设置头
     app.use(commonHeaders);
     // 通用错误异常处理
-    app.use(commonError)
+    app.use(commonError);
+    // log
+    app.use(logger);
     app.use(koaBody());
     app.use(router.routes()).use(router.allowedMethods());
     app.use((ctx: any) => {

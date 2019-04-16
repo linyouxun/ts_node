@@ -1,6 +1,7 @@
 import { ERRORCODE, redisParams } from '../utils/const';
 import * as redis from 'redis';
 import { xmlToJson } from '../utils/tool';
+import { apiLogger } from '../utils/log';
 import { promisify } from 'util';
 
 export const redisConfig = async (ctx, next) => {
@@ -9,6 +10,10 @@ export const redisConfig = async (ctx, next) => {
   client.getAsync = getAsync;
   ctx.redis = client;
   await next();
+}
+export const logger = async (ctx, next) => {
+  await next();
+  apiLogger.info(`[method:${ctx.method} status:${ctx.status} url:${ctx.href} ip:${ctx.ip} data: ${JSON.stringify(ctx.query || {})} ${JSON.stringify(ctx.xmlBody || {})} ${JSON.stringify(ctx.request.body || {})} user-agent:${ctx.header['user-agent']}]`);
 }
 // 解析XML
 export const xmlConfig = async (ctx, next) => {
