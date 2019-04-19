@@ -12,16 +12,11 @@ export default class Statistics extends Model<Statistics> {
     @AutoIncrement
     @Column
     id: number;
-    @Column({comment: 'code标识码', type: DataType.STRING})
-    code: number;
-
     /**
-     * 用户信息
+     * 配置信息
      */
-    @Column({comment: '用户ID', field: "user_id"})
-    userId: number;
-    @Column({comment: '用户名称', field: 'user_name'})
-    userName: string;
+    @Column({comment: '配置ID', field: 'config_id'})
+    configId: number;
     /**
      * 页面信息
      */
@@ -33,6 +28,14 @@ export default class Statistics extends Model<Statistics> {
     lastTime: number;
     @Column({comment: '访问时间', field: 'create_time', type: DataType.BIGINT})
     createTime: number;
+    @Column({comment: '访问次数（浏览器关闭结束）', field: 'visit_html_count'})
+    visitHtmlCount: number;
+    @Column({comment: '访问次数（单天浏览器）', field: 'visit_count'})
+    visitCount: number;
+    @Column({comment: '访问次数（浏览器）', field: 'visit_count_total'})
+    visitCountTotal: number;
+    @Column({comment: '访问者', field: 'visitor'})
+    visitor: string;
     /**
      * 设备信息
      */

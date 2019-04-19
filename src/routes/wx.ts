@@ -64,7 +64,7 @@ router.get('/wx/template/send', async(ctx, next) => {
 
 router.get('/wx/authorize', async(ctx, next) => {
     let { type, scope, callback , id, goback = '/loginjs.html', res = '{}'} = ctx.query;
-    const server = 'http://d93076bc.ngrok.io';
+    const server = 'http://3469b265.ngrok.io';
     // console.log('log', goback, type, scope);
     const goUri = server + '/wx/getCode?goback=' + encodeURIComponent(goback) + '&scope=' + scope;
     if (type == 'wxlogin_jump') {

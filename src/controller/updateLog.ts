@@ -92,4 +92,3 @@ export const updateList = async function(params) {
         pagination
     };
 }
-

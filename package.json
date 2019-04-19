@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "createDb": "node dist/script/createDb",
-    "start": "nodemon dist/index",
+    "start": "cross-env NODE_ENV=development nodemon dist/index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cross-env": "^5.2.0",
     "crypto": "^1.0.1",
     "koa": "^2.7.0",
     "koa-body": "3",
@@ -30,6 +31,7 @@
     "types": "^0.1.1",
     "ua-parser-js": "^0.7.19",
     "util": "^0.11.1",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.19",
+    "zlib": "^1.0.5"
   }
 }

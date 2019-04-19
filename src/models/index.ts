@@ -4,3 +4,5 @@ export { default as UpdateLog } from './db/UpdateLog';
 export { default as UpdateLabel } from './db/UpdateLabel';
 export { default as UpdateLogAndLabel } from './db/UpdateLogAndLabel';
 export { default as Shi } from './db/Shi';
+export { default as WxUser } from './db/WxUser';
+export { default as User } from './db/User';

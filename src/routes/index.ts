@@ -1,6 +1,6 @@
 import router from './router';
 require('./wx');
-require('./page');
+require('./statistics');
 require('./mac');
 require('./updateLog');
 require('./labels');
