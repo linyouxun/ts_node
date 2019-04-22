@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "createDb": "node dist/script/createDb",
+    "createDb": "node dist/script/createdb",
+    "createDbDev": "cross-env NODE_ENV=development node dist/script/createdb",
     "start": "cross-env NODE_ENV=development nodemon dist/index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

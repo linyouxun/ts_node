@@ -1,4 +1,4 @@
-import { pageCount, pageList } from '../controller/statistics';
+import { statisticsCount, statisticsList } from '../controller/statistics';
 import { failed } from './base';
 import router from './router';
 import { jsStatistics } from '../utils/htmltool';
@@ -6,7 +6,7 @@ import { ihdr, idat } from '../utils/png';
 
 router.get('/statistics/:id/count.png', async (ctx, next) => {
     const { id } = ctx.params;
-    const { screen, width, height, referrer, url, vh, vc, vt, o, userId } = ctx.query;
+    const { screen, width, height, referrer, url, vh, vc, vt, o, userId, pvl } = ctx.query;
     const userAgent = ctx.req.headers['user-agent'] || '未知';
     ctx.response.type = 'png';
     ctx.body = Buffer.concat([
@@ -17,7 +17,7 @@ router.get('/statistics/:id/count.png', async (ctx, next) => {
     ]);
     // 添加入库
     setTimeout(async () => {
-        await pageCount(id, userAgent, screen, width, height, referrer, url, vh, vc, vt, o, userId, ctx.ipv4);
+        await statisticsCount(id, userAgent, screen, width, height, referrer, url, vh, vc, vt, o, userId, pvl, ctx.ipv4);
     }, 0);
 });
 
@@ -27,7 +27,7 @@ router.get('/statistics/:id/normal.js', async (ctx, next) => {
     ctx.body = jsStatistics(id);
 });
 
-router.get('/page/list', async (ctx, next) => {
+router.get('/statistics/list', async (ctx, next) => {
     let { cursor = 1, limit = 10, params = '{}' } = ctx.query;
     try {
         params = JSON.parse(params);  
@@ -46,7 +46,7 @@ router.get('/page/list', async (ctx, next) => {
     } else {
         params.limit = +limit;
     }
-    return await pageList(ctx, next, params);
+    return await statisticsList(ctx, next, params);
 });
 export default router;
   

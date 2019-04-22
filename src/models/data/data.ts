@@ -9,6 +9,7 @@ export const labels = [
     {labelName: '需求确认'},
     {labelName: '会议记录'},
     {labelName: '其他'},
+    {labelName: '三维家'},
 ]
 
 // 参考 http://fafu.xcz.im/library

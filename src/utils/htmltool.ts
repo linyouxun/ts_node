@@ -127,13 +127,19 @@ export const jsStatistics = function(id) {
       }
       return paramsList.join('&');
     }
+    /**
+     * 设置上一页面
+     */
+    function setPrePage(url) {
+      setCurrentDayCookie(id + '-pvl', url || window.location.href)
+    }
   
     /**
      * 访问页面
      */
     function visitPage() {
       var vh = getCookie(id + '-visitor-' + location.origin + location.pathname) || 0;
-      setCurrentDayCookie(id + '-visitor-' + location.origin + location.pathname, +vh + 1)
+      setCurrentDayCookie(id + '-visitor-' + location.origin + location.pathname, +vh + 1);
       var vc = getCookie(id + '-visitorCount') || 0;
       setCurrentDayCookie(id + '-visitorCount', +vc + 1)
       var vt = getCookie(id + '-visitorCountTotal') || 0;
@@ -159,6 +165,10 @@ export const jsStatistics = function(id) {
         id: id,
         o: o,
         userId: userInfo.visitor
+      }
+      var pvl = getCookie(id + '-pvl') || 0;
+      if (!!pvl && pvl != window.location.href) {
+        params.pvl = pvl;
       }
       var img = new Image();
       img.src = 'http://${host}/statistics${!!id ? '/' + id : ''}/count.png?' + objToUrlString(params);
@@ -228,6 +238,7 @@ export const jsStatistics = function(id) {
       visitPage: visitPage,
       setInfo: setInfo,
       sendForm: sendForm,
+      setPrePage: setPrePage
     }
   })(window, document)
     `;

@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+// import * as moment from 'moment';
 import { success, failed } from '../routes/base';
 import { fetchData } from '../utils/request';
 import { GAODE_KEY } from '../utils/const';
@@ -10,7 +10,7 @@ import { Sequelize } from 'sequelize-typescript';
 const Op = Sequelize.Op;
 
 
-export async function pageList(ctx, next, params) {
+export async function statisticsList(ctx, next, params) {
     let where = {};
     if(!!params.times && params.times.length > 1) {
         where = Object.assign(where, {
@@ -77,7 +77,7 @@ export async function pageList(ctx, next, params) {
 /**
  * 页面访问统计
  */
-export async function pageCount(configId, userAgent, screen, width, height, referrer, url, vh, vc, vt, o, visitor, ip) {
+export async function statisticsCount(configId, userAgent, screen, width, height, referrer, url, vh, vc, vt, o, visitor, pvl, ip) {
     let province = '未知';
     let city = '未知';
     let adcode = '未知';
@@ -105,7 +105,8 @@ export async function pageCount(configId, userAgent, screen, width, height, refe
             ip: ip,
             province,
             city,
-            adcode
+            adcode,
+            preViewUrl: pvl,
         });
     } catch (error) {
         console.log('count.png', error, configId, userAgent, screen, width, height, referrer, url, vh, vc, vt, o, visitor, ip)
