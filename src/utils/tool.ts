@@ -47,3 +47,33 @@ export const checkToken = function(signature, timestamp, nonce) {
         return false;
     }
 }
+
+/**
+ * 微信signature获取
+ * @param noncestr 随机字符串
+ * @param jsapiTicket 有效的jsapi_ticket
+ * @param timestamp 时间戳(秒)
+ * @param url 当前网页的URL，不包含#及其后面部分
+ */
+export const getSignature = function(noncestr, jsapiTicket, timestamp, url) {
+    const list = [
+        {key: 'noncestr', name: noncestr}, 
+        {key: 'jsapi_ticket', name: jsapiTicket}, 
+        {key: 'timestamp', name: timestamp}, 
+        {key: 'url', name: url}
+    ].sort(function(item, item2) {
+        if (item.key < item2.key) {
+            return -1;
+        } else if (item.key == item2.key) {
+            return 0
+        } else {
+            return 1
+        }
+    });
+    const arr = [];
+    list.forEach(element => {
+        arr.push(element['key'] + '=' + element['name']);
+    });
+    const signature = crypto.createHash('sha1').update(arr.join("&")).digest('hex').toUpperCase();
+    return signature;
+}

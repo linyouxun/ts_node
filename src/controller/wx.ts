@@ -1,8 +1,14 @@
 import * as moment from 'moment';
 import { fetchData } from '../utils/request';
+import { getSignature } from '../utils/tool';
 import { WX_APPID, WX_SECRET, WX_SERVER } from '../utils/const';
 import { wxImage, wxText, wxVoice, wxVideo, wxMusic, wxNews, wxLink } from '../utils/wxMsg';
 
+/**
+ * 获取微信开发token
+ * @param ctx 
+ * @param refresh 
+ */
 export const getToken = async function(ctx, refresh = null) {
     let obj = {} as any;
     try {
@@ -35,6 +41,57 @@ export const getToken = async function(ctx, refresh = null) {
     obj.deadLine = moment(obj.time + deadMinute * 60 * 1000).format('YYYY-MM-DD HH:mm:ss');
     obj.currentTime = moment(time).format('YYYY-MM-DD HH:mm:ss');
     return obj;
+}
+
+/**
+ * 获取微信js开发ticket
+ * @param ctx 
+ * @param refresh 
+ */
+export const getJSTicket = async function(ctx, refresh = null) {
+    let tokenObj = await getToken(ctx);
+    let ticketKey = WX_APPID + '_jsapi_ticket';
+    let obj = {} as any;
+    try {
+        obj = await ctx.redis.getAsync(ticketKey);
+        obj = JSON.parse(obj) || {};
+    } catch (error) {}
+    const time = +new Date();
+    // 失效分钟
+    const deadMinute = 15;
+    // 1:45小时失效
+    if (!obj.time || !obj.token || (time > obj.time) || !!refresh) {
+        const res = await fetchData({
+            access_token: tokenObj.token,
+            type: 'jsapi',
+        }, `${WX_SERVER}/cgi-bin/ticket/getticket`, {
+            method: 'GET'
+        });
+        if (!res.errcode || res.errcode === 0) {
+            obj = {
+                ticket: res.ticket,
+                time: time + (res.expires_in - deadMinute * 60) * 1000
+            }
+            ctx.redis.set(ticketKey, JSON.stringify(obj));
+        } else {
+            return res;
+        }
+    }
+    obj.refreshTime = moment(obj.time || time).format('YYYY-MM-DD HH:mm:ss');
+    obj.deadLine = moment(obj.time + deadMinute * 60 * 1000).format('YYYY-MM-DD HH:mm:ss');
+    obj.currentTime = moment(time).format('YYYY-MM-DD HH:mm:ss');
+    return obj;
+}
+
+/**
+ * 返回签名
+ * @param noncestr 
+ * @param jsapiTicket 
+ * @param timestamp 
+ * @param url 
+ */
+export const getJSApiTicket = async function(noncestr, jsapiTicket, timestamp, url) {
+    return getSignature(noncestr, jsapiTicket, timestamp, url);
 }
 
 export const getTokenPost = function(ctx) {

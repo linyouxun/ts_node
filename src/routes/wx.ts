@@ -1,5 +1,5 @@
 
-import { getToken, getTokenPost, sendTemplate, getCode, getWxUserInfo} from '../controller/wx';
+import { getToken, getTokenPost, sendTemplate, getCode, getWxUserInfo, getJSTicket, getJSApiTicket} from '../controller/wx';
 import { checkToken } from '../utils/tool';
 import { failed, success } from './base';
 import router from './router';
@@ -26,6 +26,32 @@ router.get('/wx/checktoken', async(ctx, next) => {
         return ctx.body = echostr;
     } 
     return ctx.body = '校验错误';
+});
+
+router.get('/wx/getticket', async(ctx, next) => {
+    const res = await getJSTicket(ctx);
+    success(ctx, next, res);
+});
+
+router.get('/wx/getsignature', async(ctx, next) => {
+    let { url } = ctx.query;
+    if (!url) {
+        return failed(ctx, next, 'signature参数错误');
+    }
+    url = url.split('#')[0];
+    const timestamp = Math.round((+new Date() / 1000));
+    const ticketObj = await getJSTicket(ctx);
+    if (!!ticketObj.errcode) {
+        return failed(ctx, next, ticketObj)
+    }
+    const noncestr = 'Wm3WZYTPz0wzccnW';
+    const res = await getJSApiTicket(noncestr, ticketObj.ticket, timestamp, url)
+    success(ctx, next, {
+        appid: WX_APPID,
+        noncestr,
+        jsapi_ticket: res,
+        timestamp,
+    });
 });
 
 router.post('/wx/checktoken', async(ctx, next) => {
@@ -64,7 +90,7 @@ router.get('/wx/template/send', async(ctx, next) => {
 
 router.get('/wx/authorize', async(ctx, next) => {
     let { type, scope, callback , id, goback = '/loginjs.html', res = '{}'} = ctx.query;
-    const server = 'http://fcb961b2.ngrok.io';
+    const server = 'http://76a2b6d8.ngrok.io';
     // console.log('log', goback, type, scope);
     const goUri = server + '/wx/getCode?goback=' + encodeURIComponent(goback) + '&scope=' + scope;
     if (type == 'wxlogin_jump') {
