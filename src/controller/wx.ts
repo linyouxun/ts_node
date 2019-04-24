@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 import { fetchData } from '../utils/request';
-import { getSignature } from '../utils/tool';
+import { getSignature, getCardSignature, getCardExtSignature } from '../utils/tool';
 import { WX_APPID, WX_SECRET, WX_SERVER } from '../utils/const';
 import { wxImage, wxText, wxVoice, wxVideo, wxMusic, wxNews, wxLink } from '../utils/wxMsg';
 
@@ -48,9 +48,9 @@ export const getToken = async function(ctx, refresh = null) {
  * @param ctx 
  * @param refresh 
  */
-export const getJSTicket = async function(ctx, refresh = null) {
+export const getJSTicket = async function(ctx, type = 'jsapi', refresh = null) {
     let tokenObj = await getToken(ctx);
-    let ticketKey = WX_APPID + '_jsapi_ticket';
+    let ticketKey = WX_APPID + '_' + type + '_ticket';
     let obj = {} as any;
     try {
         obj = await ctx.redis.getAsync(ticketKey);
@@ -60,10 +60,10 @@ export const getJSTicket = async function(ctx, refresh = null) {
     // 失效分钟
     const deadMinute = 15;
     // 1:45小时失效
-    if (!obj.time || !obj.token || (time > obj.time) || !!refresh) {
+    if (!obj.time || !obj.ticket || (time > obj.time) || !!refresh) {
         const res = await fetchData({
             access_token: tokenObj.token,
-            type: 'jsapi',
+            type,
         }, `${WX_SERVER}/cgi-bin/ticket/getticket`, {
             method: 'GET'
         });
@@ -80,6 +80,7 @@ export const getJSTicket = async function(ctx, refresh = null) {
     obj.refreshTime = moment(obj.time || time).format('YYYY-MM-DD HH:mm:ss');
     obj.deadLine = moment(obj.time + deadMinute * 60 * 1000).format('YYYY-MM-DD HH:mm:ss');
     obj.currentTime = moment(time).format('YYYY-MM-DD HH:mm:ss');
+    obj.type = type;
     return obj;
 }
 
@@ -92,6 +93,31 @@ export const getJSTicket = async function(ctx, refresh = null) {
  */
 export const getJSApiTicket = async function(noncestr, jsapiTicket, timestamp, url) {
     return getSignature(noncestr, jsapiTicket, timestamp, url);
+}
+
+/**
+ * js卡卷签名
+ * @param api_ticket 
+ * @param appid 
+ * @param location_id 
+ * @param timestamp 
+ * @param nonce_str 
+ * @param card_id 
+ * @param card_type 
+ */
+export const getJSCardTicket = async function(api_ticket, appid, location_id, timestamp, nonce_str, card_id, card_type) {
+    return getCardSignature(api_ticket, appid, location_id, timestamp, nonce_str, card_id, card_type);
+}
+
+/**
+ * 添加卡卷
+ * @param api_ticket 
+ * @param timestamp 
+ * @param nonce_str 
+ * @param card_id 
+ */
+export const getJSCardExtTicket = async function(api_ticket, timestamp, nonce_str, card_id) {
+    return getCardExtSignature(api_ticket, timestamp, nonce_str, card_id);
 }
 
 export const getTokenPost = function(ctx) {

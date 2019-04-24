@@ -1,5 +1,5 @@
 
-import { getToken, getTokenPost, sendTemplate, getCode, getWxUserInfo, getJSTicket, getJSApiTicket} from '../controller/wx';
+import { getToken, getTokenPost, sendTemplate, getCode, getWxUserInfo, getJSTicket, getJSApiTicket, getJSCardTicket, getJSCardExtTicket } from '../controller/wx';
 import { checkToken } from '../utils/tool';
 import { failed, success } from './base';
 import router from './router';
@@ -29,7 +29,8 @@ router.get('/wx/checktoken', async(ctx, next) => {
 });
 
 router.get('/wx/getticket', async(ctx, next) => {
-    const res = await getJSTicket(ctx);
+    const { refresh, type } = ctx.query;
+    const res = await getJSTicket(ctx, type || 'jsapi', refresh || null);
     success(ctx, next, res);
 });
 
@@ -45,12 +46,61 @@ router.get('/wx/getsignature', async(ctx, next) => {
         return failed(ctx, next, ticketObj)
     }
     const noncestr = 'Wm3WZYTPz0wzccnW';
-    const res = await getJSApiTicket(noncestr, ticketObj.ticket, timestamp, url)
+    const signType = await getJSApiTicket(noncestr, ticketObj.ticket, timestamp, url);
     success(ctx, next, {
         appid: WX_APPID,
         noncestr,
-        jsapi_ticket: res,
+        signType,
         timestamp,
+    });
+});
+
+/**
+ * 获取卡卷列表
+ */
+router.get('/wx/getCards', async(ctx, next) => {
+    let { shopId, cardType, cardId,  } = ctx.query;
+    const timestamp = Math.round((+new Date() / 1000));
+    const ticketObj = await getJSTicket(ctx, 'wx_card');
+    if (!!ticketObj.errcode) {
+        return failed(ctx, next, ticketObj)
+    }
+    const noncestr = 'Wm3WZYTPz0wzccnW';
+    const cardSign = await getJSCardTicket(ticketObj.ticket, WX_APPID, shopId, timestamp, noncestr, cardId, cardType);
+    success(ctx, next, {
+        appid: WX_APPID,
+        noncestr,
+        signType: 'SHA1',
+        timestamp,
+        cardSign,
+        shopId,
+        cardType,
+        cardId,
+    });
+});
+
+/**
+ * 添加卡卷
+ */
+router.get('/wx/addCard', async(ctx, next) => {
+    let { cardId } = ctx.query;
+    if (!cardId) {
+        return failed(ctx, next, 'cardId参数错误');
+    }
+    const timestamp = Math.round((+new Date() / 1000));
+    const ticketObj = await getJSTicket(ctx, 'wx_card');
+    if (!!ticketObj.errcode) {
+        return failed(ctx, next, ticketObj)
+    }
+    const noncestr = 'Wm3WZYTPz0wzccnW';
+    // const noncestr = '';
+    const cardExt = await getJSCardExtTicket(ticketObj.ticket, timestamp, noncestr, cardId);
+    success(ctx, next, {
+        appid: WX_APPID,
+        noncestr,
+        timestamp,
+        cardExt,
+        cardId,
     });
 });
 
@@ -90,7 +140,7 @@ router.get('/wx/template/send', async(ctx, next) => {
 
 router.get('/wx/authorize', async(ctx, next) => {
     let { type, scope, callback , id, goback = '/loginjs.html', res = '{}'} = ctx.query;
-    const server = 'http://76a2b6d8.ngrok.io';
+    const server = 'http://af926c91.ngrok.io';
     // console.log('log', goback, type, scope);
     const goUri = server + '/wx/getCode?goback=' + encodeURIComponent(goback) + '&scope=' + scope;
     if (type == 'wxlogin_jump') {

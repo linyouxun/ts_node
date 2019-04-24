@@ -77,3 +77,72 @@ export const getSignature = function(noncestr, jsapiTicket, timestamp, url) {
     const signature = crypto.createHash('sha1').update(arr.join("&")).digest('hex').toUpperCase();
     return signature;
 }
+
+/**
+ * 微信卡卷列表
+ * @param api_ticket 
+ * @param appid 
+ * @param location_id 
+ * @param timestamp 
+ * @param nonce_str 
+ * @param card_id 
+ * @param card_type 
+ */
+export const getCardSignature = function(api_ticket, appid, location_id, timestamp, nonce_str, card_id, card_type) {
+    const list = [
+        { key: '1api_ticket', name: api_ticket },
+        { key: '2app_id', name: appid },
+        { key: '3location_id', name: location_id },
+        { key: '4time_stamp', name: timestamp + '' },
+        { key: '5nonce_str', name: nonce_str },
+        { key: '6card_id', name: card_id },
+        { key: '7card_type', name: card_type },
+    ].sort(function(item, item2) {
+        if (item.key < item2.key) {
+            return -1;
+        } else if (item.key == item2.key) {
+            return 0
+        } else {
+            return 1
+        }
+    });
+    const arr = [];
+    list.forEach(element => {
+        arr.push(element['name'] || '');
+    });
+    const signature = crypto.createHash('sha1').update(arr.join("")).digest('hex');
+    return {
+        signature,
+        str: arr.join("")
+    };
+}
+
+/**
+ * cardExt
+ * @param api_ticket 
+ * @param timestamp 
+ * @param nonce_str 
+ * @param card_id 
+ */
+export const getCardExtSignature = function(api_ticket, timestamp, nonce_str, card_id) {
+    const list = [
+        { key: '1api_ticket', name: api_ticket },
+        { key: '2time_stamp', name: timestamp + '' },
+        { key: '3nonce_str', name: nonce_str },
+        { key: '4card_id', name: card_id },
+    ].sort(function(item, item2) {
+        if (item.name < item2.name) {
+            return -1;
+        } else if (item.name == item2.name) {
+            return 0
+        } else {
+            return 1
+        }
+    });
+    const arr = [];
+    list.forEach(element => {
+        arr.push(element['name'] || '');
+    });
+    const signature = crypto.createHash('sha1').update(arr.join("")).digest('hex');
+    return signature
+}

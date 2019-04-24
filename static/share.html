@@ -7,10 +7,74 @@
     <title>微信分享</title>
 </head>
 <body>
+    <button onclick="addCard()">添加卡卷</button>
+    <button onclick="getTicket()">领取卡卷</button>
+    <button onclick="openTicket()">打开卡卷</button>
     <script src="./js/jweixin-1.4.0.js"></script>
     <script src="/statistics/2/normal.js"></script>
     <script src=""></script>
     <script>
+        var data = {};
+        function addCard() {
+            var cardId = 'phbyS53mvbtWyLf7QNRekJWHh0Cg';
+            sTool.request({
+                url: '/wx/addCard?cardId=' + cardId,
+                success: function(res) {
+                    try {
+                        res = JSON.parse(res);
+                        if (res.code == 200) {
+                            console.log(res);
+                            wx.addCard({
+                                cardList: [{
+                                    cardId: cardId,
+                                    cardExt: JSON.stringify({
+                                        code: '',
+                                        openid: '',
+                                        timestamp: res.result.timestamp + '',
+                                        nonce_str: res.result.noncestr,
+                                        signature: res.result.cardExt,
+                                    })
+                                }], // 需要添加的卡券列表
+                                success: function (res) {
+                                    console.log('add success', res);
+                                    var cardList = res.cardList; // 添加的卡券列表信息
+                                }
+                            });
+                        } else {
+                            alert('卡卷获取错误')
+                        }
+                    } catch (error) {
+                        alert('卡卷获取错误')    
+                    }
+                },
+            })
+        }
+        function openTicket() {
+            wx.openCard({
+                cardList: [{
+                    cardId: 'phbyS59Wb6pEPy1beypcr9G-I2F8',
+                    code: '358483166079'
+                }]// 需要打开的卡券列表
+            });
+        }
+        function getTicket() {
+            // alert(JSON.stringify(data))
+            wx.chooseCard({
+                shopId: data.shopId, // 门店Id
+                cardType: data.cardType, // 卡券类型
+                cardId: data.cardId, // 卡券Id
+                timestamp: data.timestamp + '', // 卡券签名时间戳
+                nonceStr: data.nonceStr, // 卡券签名随机串
+                signType: data.signType, // 签名方式，默认'SHA1'
+                cardSign: data.cardSign, // 卡券签名
+                success: function (res) {
+                    console.log('success', res);
+                },
+                failed: function(res) {
+                    console.log('failed', res);
+                }
+            });
+        }
         sTool.request({
             url: '/wx/getsignature?url=' + encodeURIComponent(window.location.href),
             success: function(res) {
@@ -22,12 +86,15 @@
                             appId: res.result.appid, // 必填，公众号的唯一标识
                             timestamp: res.result.timestamp, // 必填，生成签名的时间戳
                             nonceStr: res.result.noncestr, // 必填，生成签名的随机串
-                            signature: res.result.jsapi_ticket,// 必填，签名
+                            signature: res.result.signType,// 必填，签名
                             jsApiList: [
                                 // 'updateAppMessageShareData',
                                 // 'updateTimelineShareData',
                                 'onMenuShareTimeline',
                                 'onMenuShareAppMessage',
+                                'chooseCard',
+                                'openCard',
+                                'addCard',
                                 // 'onMenuShareQQ',
                                 // 'onMenuShareWeibo',
                                 // 'onMenuShareQZone',
@@ -45,6 +112,39 @@
             // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
             // 初始化成功
             console.log('init success');
+            sTool.request({
+                url: '/wx/getCards?shopId=&cardType=GROUPON&cardId=',
+                // url: '/wx/getCards?cardType=GROUPON',
+                success: function(res) {
+                    try {
+                        res = JSON.parse(res);
+                        if (res.code == 200) {
+                            console.log({
+                                shopId: res.result.shopId || '', // 门店Id
+                                cardType: res.result.cardType || '', // 卡券类型
+                                cardId: res.result.cardId || '', // 卡券Id
+                                timestamp: res.result.timestamp+'', // 卡券签名时间戳
+                                nonceStr: res.result.noncestr, // 卡券签名随机串
+                                signType: res.result.signType, // 签名方式，默认'SHA1'
+                                cardSign: res.result.cardSign.signature, // 卡券签名
+                            })
+                            data = {
+                                shopId: res.result.shopId || '', // 门店Id
+                                cardType: res.result.cardType || '', // 卡券类型
+                                cardId: res.result.cardId || '', // 卡券Id
+                                timestamp: res.result.timestamp+'', // 卡券签名时间戳
+                                nonceStr: res.result.noncestr, // 卡券签名随机串
+                                signType: res.result.signType, // 签名方式，默认'SHA1'
+                                cardSign: res.result.cardSign.signature, // 卡券签名
+                            }
+                        } else {
+                            alert('卡卷获取错误')
+                        }
+                    } catch (error) {
+                        alert('卡卷获取错误')    
+                    }
+                },
+            })
             // wx.updateAppMessageShareData({ 
             //     title: document.title, // 分享标题
             //     desc: document.title, // 分享描述
