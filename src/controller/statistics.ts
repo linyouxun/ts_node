@@ -87,9 +87,9 @@ export async function statisticsCount(configId, userAgent, screen, width, height
     });
     // const res: any = {};
     if (res.info === 'OK') {
-        province = res.province;
-        city = res.city;
-        adcode = res.adcode;
+        province = !!res.province ? res.province.join('') : '无法识别';
+        city = !!res.city ? res.city.join('') : '无法识别';
+        adcode = !!res.adcode ? res.adcode.join('') : '无法识别';
     }
     try {
         await Statistics.create({
