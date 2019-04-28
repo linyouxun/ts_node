@@ -102,6 +102,7 @@ export async function statisticsCount(configId, userAgent, screen, width, height
             visitor: visitor,
             deviceInfo: userAgent,
             screen: screen,
+            referrer: referrer,
             ip: ip,
             province,
             city,
