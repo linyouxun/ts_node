@@ -98,9 +98,9 @@ export const getCardSignature = function(api_ticket, appid, location_id, timesta
         { key: '6card_id', name: card_id },
         { key: '7card_type', name: card_type },
     ].sort(function(item, item2) {
-        if (item.key < item2.key) {
+        if (item.name < item2.name) {
             return -1;
-        } else if (item.key == item2.key) {
+        } else if (item.name == item2.name) {
             return 0
         } else {
             return 1
@@ -110,6 +110,7 @@ export const getCardSignature = function(api_ticket, appid, location_id, timesta
     list.forEach(element => {
         arr.push(element['name'] || '');
     });
+    console.log(list);
     const signature = crypto.createHash('sha1').update(arr.join("")).digest('hex');
     return {
         signature,

@@ -1,5 +1,5 @@
 import { statisticsCount, statisticsList } from '../controller/statistics';
-import { failed } from './base';
+import { failed, success } from './base';
 import router from './router';
 import { jsStatistics } from '../utils/htmltool';
 import { ihdr, idat } from '../utils/png';
@@ -15,6 +15,17 @@ router.get('/statistics/:id/count.png', async (ctx, next) => {
         idat(1, 1),
         Buffer.from('IEND'),
     ]);
+    // 添加入库
+    setTimeout(async () => {
+        await statisticsCount(id, userAgent, screen, width, height, referrer, url, vh, vc, vt, o, userId, pvl, ctx.ipv4);
+    }, 0);
+});
+
+router.get('/statistics/:id/count', async (ctx, next) => {
+    const { id } = ctx.params;
+    const { screen, width, height, referrer, url, vh, vc, vt, o, userId, pvl } = ctx.query;
+    const userAgent = ctx.req.headers['user-agent'] || '未知';
+    success(ctx, next, {}, '添加统计：' + id);
     // 添加入库
     setTimeout(async () => {
         await statisticsCount(id, userAgent, screen, width, height, referrer, url, vh, vc, vt, o, userId, pvl, ctx.ipv4);

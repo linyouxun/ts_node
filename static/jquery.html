@@ -1,1 +1,44 @@
-ssssssssd
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id='res'></div>
+    <script src="https://code.jquery.com/jquery-3.4.0.js" integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo=" crossorigin="anonymous"></script>
+    <script>
+        var data = {
+            "actions":[
+                {
+                    "user_action_set_id":"1108817280",
+                    "url": `http:\www./pages/index/index`,
+                    "action_time":1556163267,
+                    "action_type":"COMPLETE_ORDER",
+                    "trace":{
+                        "click_id":"wx02qbdkbkfqjlo4"
+                    }
+                }
+            ]
+        }
+        var access_token = '20_VJK_s9w9Fszn_Kl--Tx5UEwNirvH3h2WMbUCsZhKVr9EnjFVunqkNgFTN_cNOAS6RuQfo9HO8q5V4fB8JBbBVKia7ZPvwZhNGlYXzdvtWLXWwBciZVvORJd13wMQYedYMP0ss117_9X1PsytDSTjAHAUJK'
+        $.ajax({
+            type: "POST",
+            url: "/marketing/user_actions/add?version=v1.0&access_token=" + access_token,
+            contentType: "application/json; charset=utf-8",
+            data: data,
+            dataType: "json",
+            success: function (res) {
+                console.log(res)
+                $('#res')[0].innerHTML = 'success' + JSON.stringify(res);
+            },
+            error: function (res) {
+                console.log(res)
+                $('#res')[0].innerHTML = 'error' + JSON.stringify(res);
+            }
+        }); 
+    </script>
+</body>
+</html>
