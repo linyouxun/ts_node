@@ -23,12 +23,12 @@ router.get('/statistics/:id/count.png', async (ctx, next) => {
 
 router.get('/statistics/:id/count', async (ctx, next) => {
     const { id } = ctx.params;
-    const { screen, width, height, referrer, url, vh, vc, vt, o, userId, pvl } = ctx.query;
+    const { screen, width, height, referrer, url, vh, vc, vt, o, userId, pvl, ip } = ctx.query;
     const userAgent = ctx.req.headers['user-agent'] || '未知';
     success(ctx, next, {}, '添加统计：' + id);
     // 添加入库
     setTimeout(async () => {
-        await statisticsCount(id, userAgent, screen, width, height, referrer, url, vh, vc, vt, o, userId, pvl, ctx.ipv4);
+        await statisticsCount(id, userAgent, screen, width, height, referrer, url, vh, vc, vt, o, userId, pvl, ip || ctx.ipv4);
     }, 0);
 });
 
