@@ -43,6 +43,8 @@ export default class Statistics extends Model<Statistics> {
     deviceInfo: string;
     @Column({comment: '屏幕', field: 'screen'})
     screen: string;
+    @Column({comment: '设备额外信息', field: 'referrer'})
+    referrer: string;
     /**
      * 区域
      */
