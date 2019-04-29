@@ -110,12 +110,8 @@ export const getCardSignature = function(api_ticket, appid, location_id, timesta
     list.forEach(element => {
         arr.push(element['name'] || '');
     });
-    console.log(list);
     const signature = crypto.createHash('sha1').update(arr.join("")).digest('hex');
-    return {
-        signature,
-        str: arr.join("")
-    };
+    return signature;
 }
 
 /**

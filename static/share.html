@@ -8,15 +8,51 @@
 </head>
 <body>
     <button onclick="addCard()">添加卡卷</button>
+    <button onclick="addCard2()">添加卡卷2</button>
     <button onclick="getTicket()">领取卡卷</button>
     <button onclick="openTicket()">打开卡卷</button>
+    <button onclick="openTicket2()">打开卡卷2</button>
     <script src="./js/jweixin-1.4.0.js"></script>
     <script src="/statistics/2/normal.js"></script>
     <script src=""></script>
     <script>
         var data = {};
         function addCard() {
-            var cardId = 'phbyS53mvbtWyLf7QNRekJWHh0Cg';
+            var cardId = 'phbyS57-644Ai1yx07yypgjELiD8';
+            sTool.request({
+                url: '/wx/addCard?cardId=' + cardId,
+                success: function(res) {
+                    try {
+                        res = JSON.parse(res);
+                        if (res.code == 200) {
+                            console.log(res);
+                            wx.addCard({
+                                cardList: [{
+                                    cardId: cardId,
+                                    cardExt: JSON.stringify({
+                                        code: '',
+                                        openid: '',
+                                        timestamp: res.result.timestamp + '',
+                                        nonce_str: res.result.noncestr,
+                                        signature: res.result.cardExt,
+                                    })
+                                }], // 需要添加的卡券列表
+                                success: function (res) {
+                                    console.log('add success', res);
+                                    var cardList = res.cardList; // 添加的卡券列表信息
+                                }
+                            });
+                        } else {
+                            alert('卡卷获取错误')
+                        }
+                    } catch (error) {
+                        alert('卡卷获取错误')    
+                    }
+                },
+            })
+        }
+        function addCard2() {
+            var cardId = 'phbyS58HgCO4lzxdxtoIabAXbBNQ';
             sTool.request({
                 url: '/wx/addCard?cardId=' + cardId,
                 success: function(res) {
@@ -54,6 +90,14 @@
                 cardList: [{
                     cardId: 'phbyS59Wb6pEPy1beypcr9G-I2F8',
                     code: '358483166079'
+                }]// 需要打开的卡券列表
+            });
+        }
+        function openTicket2() {
+            wx.openCard({
+                cardList: [{
+                    cardId: 'phbyS53mvbtWyLf7QNRekJWHh0Cg',
+                    code: '478620242073'
                 }]// 需要打开的卡券列表
             });
         }
@@ -113,7 +157,7 @@
             // 初始化成功
             console.log('init success');
             sTool.request({
-                url: '/wx/getCards?shopId=&cardType=GROUPON&cardId=',
+                url: '/wx/getCards?shopId=&cardType=GROUPON&cardId=phbyS58HgCO4lzxdxtoIabAXbBNQ',
                 // url: '/wx/getCards?cardType=GROUPON',
                 success: function(res) {
                     try {
@@ -126,7 +170,7 @@
                                 timestamp: res.result.timestamp+'', // 卡券签名时间戳
                                 nonceStr: res.result.noncestr, // 卡券签名随机串
                                 signType: res.result.signType, // 签名方式，默认'SHA1'
-                                cardSign: res.result.cardSign.signature, // 卡券签名
+                                cardSign: res.result.cardSign, // 卡券签名
                             })
                             data = {
                                 shopId: res.result.shopId || '', // 门店Id
@@ -135,7 +179,7 @@
                                 timestamp: res.result.timestamp+'', // 卡券签名时间戳
                                 nonceStr: res.result.noncestr, // 卡券签名随机串
                                 signType: res.result.signType, // 签名方式，默认'SHA1'
-                                cardSign: res.result.cardSign.signature, // 卡券签名
+                                cardSign: res.result.cardSign, // 卡券签名
                             }
                         } else {
                             alert('卡卷获取错误')

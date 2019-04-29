@@ -220,6 +220,16 @@ export const sendTemplate = async function(ctx, data) {
     return res;
 }
 
+export const getCardList = async function(token, data) {
+    const res = await fetchData(data, `${WX_SERVER}/card/batchget?access_token=${token}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    return res;
+}
+
 // /**
 //  * 获取用户信息
 //  * @param accessToken 

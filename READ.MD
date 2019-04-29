@@ -6,10 +6,10 @@ curl -F media=@1.mp4 "https://api.weixin.qq.com/cgi-bin/media/upload?access_toke
         "groupon": {
             "base_info": {
                 "logo_url": "http://mmbiz.qpic.cn/mmbiz_jpg/AXfRBdrRUlN6HTBkYvTIpK7fQwWv2hCzcMTrNibvuNibn53ybErTK7ibpfDbBlLuas46CSibxdnAiaYibpSQdSIymB6w/0", 
-                "brand_name": "微信餐厅2", 
+                "brand_name": "测试卡卷", 
                 "code_type": "CODE_TYPE_TEXT", 
-                "title": "132元双人火锅套餐", 
-                "sub_title": "周末狂欢必备", 
+                "title": "测试卡卷", 
+                "sub_title": "测试卡卷-周末狂欢必备", 
                 "color": "Color010", 
                 "notice": "使用时向服务员出示此券", 
                 "service_phone": "020-88888888", 
@@ -81,3 +81,11 @@ curl -F media=@1.mp4 "https://api.weixin.qq.com/cgi-bin/media/upload?access_toke
 1.将 api_ticket、appid、location_id、timestamp、nonce_str、card_id、card_type的value值进行字符串的字典序排序。
 
 2.将所有参数字符串拼接成一个字符串进行sha1加密，得到cardSign。
+
+curl 'https://api.weixin.qq.com/card/user/getcardlist?access_token=21_AOV8iSfAVoDWOlyVlHkKYIFU1FsXAzVv-AE4KyVxNOqkX0XS05P1hu4VnKBmP3uW51sbXHzl52R14h4Hp2ryZWKBHCpEAdnnUIMzM50P3d4d1W0giCX5clFPWIzQQ7Seqn-0rvgFABY3pSbaVSUeAFAOLN' -X POST -d '{"openid": "ohbyS525fs_Gc6uDC2yKBnmL81zQ","card_id": "phbyS52rzM9gCz5cV7YmaQdcaCgc"}'
+curl 'https://api.weixin.qq.com/card/user/getcardlist?access_token=21_AOV8iSfAVoDWOlyVlHkKYIFU1FsXAzVv-AE4KyVxNOqkX0XS05P1hu4VnKBmP3uW51sbXHzl52R14h4Hp2ryZWKBHCpEAdnnUIMzM50P3d4d1W0giCX5clFPWIzQQ7Seqn-0rvgFABY3pSbaVSUeAFAOLN' -X POST -d '{"openid": "ohbyS525fs_Gc6uDC2yKBnmL81zQ","card_id": "phbyS52voE1H-BEM1SImCkfb--Fk"}'
+curl 'https://api.weixin.qq.com/card/user/getcardlist?access_token=21_AOV8iSfAVoDWOlyVlHkKYIFU1FsXAzVv-AE4KyVxNOqkX0XS05P1hu4VnKBmP3uW51sbXHzl52R14h4Hp2ryZWKBHCpEAdnnUIMzM50P3d4d1W0giCX5clFPWIzQQ7Seqn-0rvgFABY3pSbaVSUeAFAOLN' -X POST -d '{"openid": "ohbyS525fs_Gc6uDC2yKBnmL81zQ","card_id": "phbyS53mvbtWyLf7QNRekJWHh0Cg"}'
+
+encrypt_code
+
+

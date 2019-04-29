@@ -1,5 +1,5 @@
 
-import { getToken, getTokenPost, sendTemplate, getCode, getWxUserInfo, getJSTicket, getJSApiTicket, getJSCardTicket, getJSCardExtTicket } from '../controller/wx';
+import { getToken, getTokenPost, sendTemplate, getCode, getWxUserInfo, getJSTicket, getJSApiTicket, getJSCardTicket, getJSCardExtTicket, getCardList } from '../controller/wx';
 import { checkToken } from '../utils/tool';
 import { failed, success } from './base';
 import router from './router';
@@ -80,6 +80,30 @@ router.get('/wx/getCards', async(ctx, next) => {
 });
 
 /**
+ * 卡卷列表
+ * https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1451025272
+ */
+router.get('/wx/card/list', async(ctx, next) => {
+    let { offset = '1', count = '10' } = ctx.query;
+    let params = {} as any;
+    // 页默认大小
+    if (!offset || +offset < 1) {
+        params.offset = 1;
+    } else {
+        params.offset = +offset;
+    }
+    // 页默认次数
+    if (!count || +count < 1) {
+        params.count = 10;
+    } else {
+        params.count = +count;
+    }
+    let tokenObj = await getToken(ctx);
+    const res = await getCardList(tokenObj.token, params);
+    success(ctx, next, res);
+});
+
+/**
  * 添加卡卷
  */
 router.get('/wx/addCard', async(ctx, next) => {
@@ -140,7 +164,7 @@ router.get('/wx/template/send', async(ctx, next) => {
 
 router.get('/wx/authorize', async(ctx, next) => {
     let { type, scope, callback , id, goback = '/loginjs.html', res = '{}'} = ctx.query;
-    const server = 'http://af926c91.ngrok.io';
+    const server = 'http://a1ace9c2.ngrok.io';
     // console.log('log', goback, type, scope);
     const goUri = server + '/wx/getCode?goback=' + encodeURIComponent(goback) + '&scope=' + scope;
     if (type == 'wxlogin_jump') {
