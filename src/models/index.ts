@@ -6,3 +6,4 @@ export { default as UpdateLogAndLabel } from './db/UpdateLogAndLabel';
 export { default as Shi } from './db/Shi';
 export { default as WxUser } from './db/WxUser';
 export { default as User } from './db/User';
+export { default as ConfigHtml } from './db/ConfigHtml';

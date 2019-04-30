@@ -1,4 +1,5 @@
-import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType } from 'sequelize-typescript';
+import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import ConfigHtml from './ConfigHtml';
 
 /**
  * 统计
@@ -15,14 +16,17 @@ export default class Statistics extends Model<Statistics> {
     /**
      * 配置信息
      */
+    @ForeignKey(() => ConfigHtml)
     @Column({comment: '配置ID', field: 'config_id'})
     configId: number;
+    @BelongsTo(() => ConfigHtml)
+    config: ConfigHtml;
     /**
      * 页面信息
      */
-    @Column({comment: '页面路径', field: 'view_url'})
+    @Column({comment: '页面路径', field: 'view_url', type: DataType.STRING(2000)})
     viewUrl: string;
-    @Column({comment: '上一页面访问路径', field: 'pre_view_url'})
+    @Column({comment: '上一页面访问路径', field: 'pre_view_url', type: DataType.STRING(2000)})
     preViewUrl: string;
     @Column({comment: '停留时间', field: 'last_time'})
     lastTime: number;
@@ -34,7 +38,7 @@ export default class Statistics extends Model<Statistics> {
     visitCount: number;
     @Column({comment: '访问次数（浏览器）', field: 'visit_count_total'})
     visitCountTotal: number;
-    @Column({comment: '访问者', field: 'visitor'})
+    @Column({comment: '访问者', field: 'visitor', type: DataType.STRING(2000)})
     visitor: string;
     /**
      * 设备信息
@@ -43,7 +47,7 @@ export default class Statistics extends Model<Statistics> {
     deviceInfo: string;
     @Column({comment: '屏幕', field: 'screen'})
     screen: string;
-    @Column({comment: '设备额外信息', field: 'referrer'})
+    @Column({comment: '设备额外信息', field: 'referrer', type: DataType.STRING(2000)})
     referrer: string;
     /**
      * 区域

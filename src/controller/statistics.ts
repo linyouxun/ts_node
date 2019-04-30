@@ -5,8 +5,10 @@ import { GAODE_KEY } from '../utils/const';
 // import Crypto from '../utils/encrypt';
 // import * as parser from 'ua-parser-js';
 import Statistics from '../models/db/Statistics';
+import ConfigHtml from '../models/db/ConfigHtml';
 import Pagination from '../utils/pagination';
 import { Sequelize } from 'sequelize-typescript';
+import queryInclude from '../models/util/queryInclude';
 const Op = Sequelize.Op;
 
 
@@ -49,10 +51,10 @@ export async function statisticsList(ctx, next, params) {
             id: params.id
         })
     }
-    if(!!params.userName) {
+    if(!!params.configId) {
         where = Object.assign(where, {
-            userName: {
-                '$like': `%${params.userName}%`
+            configId: {
+                '$like': `%${params.configId}%`
             }
         })
     }
@@ -64,9 +66,10 @@ export async function statisticsList(ctx, next, params) {
     let pagination = new Pagination(total, params.cursor, params.limit);
     const list = await Statistics.findAll(Object.assign(
         options, {
-            attributes: ['id', 'configId', 'viewUrl', 'preViewUrl', 'city', 'province', 'createTime', 'lastTime'],
+            attributes: ['id', 'configId', 'viewUrl', 'preViewUrl', 'city', 'province', 'createTime', 'lastTime', 'visitor'],
             limit: params.limit,
-            offset: params.limit * (params.cursor - 1)
+            offset: params.limit * (params.cursor - 1),
+            include: queryInclude.ConfigHtml
         }))
     return success(ctx, next, {
         list,
@@ -93,7 +96,7 @@ export async function statisticsCount(configId, userAgent, screen, width, height
     }
     try {
         await Statistics.create({
-            configId,
+            configId: +configId,
             viewUrl: url,
             createTime: +new Date(),
             visitHtmlCount: vh,

@@ -40,11 +40,20 @@ export const commonError = async (ctx, next) => {
   try {
     await next();
   } catch (error) {
-    ctx.status = ERRORCODE.failed;
-    ctx.body = {
-      code: ERRORCODE.failed,
-      message: error.message,
-    };
+    if ('development' === process.env.NODE_ENV) {
+      ctx.status = ERRORCODE.failed;
+      ctx.body = {
+        code: ERRORCODE.failed,
+        message: error.message,
+        stack: error.stack,
+      };
+    } else {
+      ctx.status = ERRORCODE.failed;
+      ctx.body = {
+        code: ERRORCODE.failed,
+        message: error.message,
+      };
+    }
   }
 }
 
