@@ -8,7 +8,7 @@ export const jsStatistics = function(id) {
     var id = '${!!id ? id : 'none'}';
     var userInfo = {};
     (function(id) {
-      userInfo = setInfo()
+      setInfo()
     })(id);
   
     /**
@@ -210,13 +210,18 @@ export const jsStatistics = function(id) {
     /**
      * 设置访问信息
      */
-    function setInfo(name) {
-      var visitor = getCookie(id + '-visitor');
+    function setInfo(visitor) {
+      if (!!visitor) {
+        return userInfo = {
+          visitor: visitor
+        };  
+      }
+      visitor = getCookie(id + '-visitor');
       if(!visitor) {
         visitor = +new Date() + '_' + Math.floor(Math.random() * 1000000);
         setCookie(id + '-visitor', visitor);
       }
-      return {
+      return userInfo = {
         visitor: visitor
       };
     }

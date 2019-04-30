@@ -69,7 +69,10 @@ export async function statisticsList(ctx, next, params) {
             attributes: ['id', 'configId', 'viewUrl', 'preViewUrl', 'city', 'province', 'createTime', 'lastTime', 'visitor'],
             limit: params.limit,
             offset: params.limit * (params.cursor - 1),
-            include: queryInclude.ConfigHtml
+            include: queryInclude.ConfigHtml,
+            order: [
+                ['createTime', 'DESC'],
+            ],
         }))
     return success(ctx, next, {
         list,
