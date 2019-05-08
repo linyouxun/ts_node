@@ -12,7 +12,7 @@ import queryInclude from '../models/util/queryInclude';
 const Op = Sequelize.Op;
 
 
-export async function statisticsList(ctx, next, params) {
+export async function statisticsList(ctx, next, params, field, fieldmerge) {
     let where = {};
     if(!!params.times && params.times.length > 1) {
         where = Object.assign(where, {
@@ -62,11 +62,17 @@ export async function statisticsList(ctx, next, params) {
             [Op.and]: where
         }
     };
+    let attributes = ['id', 'configId', 'viewUrl', 'preViewUrl', 'city', 'province', 'createTime', 'lastTime', 'visitor'];
+    if (field instanceof Array && field.length > 0) {
+        attributes = field;
+    } else if (fieldmerge instanceof Array && fieldmerge.length > 0) {
+        attributes = attributes.concat(fieldmerge);
+    }
     let total = await Statistics.count(options);
     let pagination = new Pagination(total, params.cursor, params.limit);
     const list = await Statistics.findAll(Object.assign(
         options, {
-            attributes: ['id', 'configId', 'viewUrl', 'preViewUrl', 'city', 'province', 'createTime', 'lastTime', 'visitor'],
+            attributes,
             limit: params.limit,
             offset: params.limit * (params.cursor - 1),
             include: queryInclude.ConfigHtml,

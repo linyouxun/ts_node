@@ -39,11 +39,21 @@ router.get('/statistics/:id/normal.js', async (ctx, next) => {
 });
 
 router.get('/statistics/list', async (ctx, next) => {
-    let { cursor = 1, limit = 10, params = '{}' } = ctx.query;
+    let { cursor = 1, limit = 10, params = '{}', field = '[]', fieldmerge = '[]'} = ctx.query;
     try {
         params = JSON.parse(params);  
     } catch (error) {
         return failed(ctx, next, '参数错误');        
+    }
+    try {
+        field = JSON.parse(field);  
+    } catch (error) {
+        return failed(ctx, next, '参数错误 field');        
+    }
+    try {
+        fieldmerge = JSON.parse(fieldmerge);  
+    } catch (error) {
+        return failed(ctx, next, '参数错误 fieldmerge');        
     }
     // 页默认大小
     if (!cursor || +cursor < 1) {
@@ -57,7 +67,7 @@ router.get('/statistics/list', async (ctx, next) => {
     } else {
         params.limit = +limit;
     }
-    return await statisticsList(ctx, next, params);
+    return await statisticsList(ctx, next, params, field, fieldmerge);
 });
 export default router;
   
