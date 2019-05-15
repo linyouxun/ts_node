@@ -137,7 +137,7 @@ export const jsStatistics = function(id) {
     /**
      * 访问页面
      */
-    function visitPage() {
+    function visitPage(params) {
       var vh = getCookie(id + '-visitor-' + location.origin + location.pathname) || 0;
       setCurrentDayCookie(id + '-visitor-' + location.origin + location.pathname, +vh + 1);
       var vc = getCookie(id + '-visitorCount') || 0;
@@ -157,7 +157,7 @@ export const jsStatistics = function(id) {
         screen: w.screen.width + '×' + w.screen.height,
         width: w.screen.width,
         height: w.screen.height,
-        referrer: d.referrer || '',
+        referrer: params.referrer || '',
         url: w.location.href,
         vh: +vh + 1,
         vc: +vc + 1,
