@@ -1,4 +1,4 @@
-// import * as moment from 'moment';
+import * as moment from 'moment';
 import { success, failed } from '../routes/base';
 import { fetchData } from '../utils/request';
 import { GAODE_KEY } from '../utils/const';
@@ -70,7 +70,7 @@ export async function statisticsList(ctx, next, params, field, fieldmerge) {
     }
     let total = await Statistics.count(options);
     let pagination = new Pagination(total, params.cursor, params.limit);
-    const list = await Statistics.findAll(Object.assign(
+    let list = await Statistics.findAll(Object.assign(
         options, {
             attributes,
             limit: params.limit,
@@ -80,6 +80,15 @@ export async function statisticsList(ctx, next, params, field, fieldmerge) {
                 ['createTime', 'DESC'],
             ],
         }))
+    list = list.map(item => {
+        if (!!item.createTime) {
+            return Object.assign(item, {
+                day: moment(+item.createTime).format('YYYY-MM-DD HH:mm:ss')
+            })
+        } else {
+            return item;
+        }
+    })
     return success(ctx, next, {
         list,
         pagination
