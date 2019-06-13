@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+// import * as moment from 'moment';
 import { success, failed } from '../routes/base';
 import { fetchData } from '../utils/request';
 import { GAODE_KEY } from '../utils/const';
@@ -70,7 +70,7 @@ export async function statisticsList(ctx, next, params, field, fieldmerge) {
     }
     let total = await Statistics.count(options);
     let pagination = new Pagination(total, params.cursor, params.limit);
-    let list = await Statistics.findAll(Object.assign(
+    const list = await Statistics.findAll(Object.assign(
         options, {
             attributes,
             limit: params.limit,
@@ -80,15 +80,6 @@ export async function statisticsList(ctx, next, params, field, fieldmerge) {
                 ['createTime', 'DESC'],
             ],
         }))
-    list = list.map(item => {
-        if (!!item.createTime) {
-            return Object.assign(item, {
-                day: moment(+item.createTime).format('YYYY-MM-DD HH:mm:ss')
-            })
-        } else {
-            return item;
-        }
-    })
     return success(ctx, next, {
         list,
         pagination
@@ -99,9 +90,9 @@ export async function statisticsList(ctx, next, params, field, fieldmerge) {
  * 页面访问统计
  */
 export async function statisticsCount(configId, userAgent, screen, width, height, referrer, url, vh, vc, vt, o, visitor, pvl, ip) {
-    let province = '未知';
-    let city = '未知';
-    let adcode = '未知';
+    let province : any = '未知';
+    let city : any = '未知';
+    let adcode: any = '未知';
     // 设置城市信息
     const res = await fetchData({key: GAODE_KEY, ip}, 'https://restapi.amap.com/v3/ip', {
       method: 'GET'
@@ -111,6 +102,15 @@ export async function statisticsCount(configId, userAgent, screen, width, height
         province = res.province;
         city = res.city;
         adcode = res.adcode;
+        if (Object.prototype.toString.call(province) == '[object Array]') {
+            province = province.join()
+        }
+        if (Object.prototype.toString.call(city) == '[object Array]') {
+            city = city.join()
+        }
+        if (Object.prototype.toString.call(adcode) == '[object Array]') {
+            adcode = adcode.join()
+        }
     }
     try {
         await Statistics.create({
