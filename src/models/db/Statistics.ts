@@ -58,7 +58,13 @@ export default class Statistics extends Model<Statistics> {
     province: string;
     @Column({comment: '城市'})
     city: string;
-    @Column({comment: '编码'})
+    @Column({comment: '区'})
+    county: string;
+    @Column({comment: '省编码'})
+    provinceCode: string;
+    @Column({comment: '市编码'})
+    cityCode: string;
+    @Column({comment: '区编码'})
     adcode: string;
 }
 
