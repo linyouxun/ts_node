@@ -92,25 +92,22 @@ export async function statisticsList(ctx, next, params, field, fieldmerge) {
 export async function statisticsCount(configId, userAgent, screen, width, height, referrer, url, vh, vc, vt, o, visitor, pvl, ip) {
     let province : any = '未知';
     let city : any = '未知';
+    let county: any = '未知';
+    let provinceCode : any = '未知';
+    let cityCode : any = '未知';
     let adcode: any = '未知';
     // 设置城市信息
-    const res = await fetchData({key: GAODE_KEY, ip}, 'https://restapi.amap.com/v3/ip', {
+    const res = await fetchData({key: GAODE_KEY, ip}, 'https://restapi.amap.com/v4/ip', {
       method: 'GET'
     });
     // const res: any = {};
-    if (res.info === 'OK') {
-        province = res.province;
-        city = res.city;
-        adcode = res.adcode;
-        if (Object.prototype.toString.call(province) == '[object Array]') {
-            province = province.join()
-        }
-        if (Object.prototype.toString.call(city) == '[object Array]') {
-            city = city.join()
-        }
-        if (Object.prototype.toString.call(adcode) == '[object Array]') {
-            adcode = adcode.join()
-        }
+    if (res.errcode == 0) {
+        province = res.data.pcd.province;
+        city = res.data.pcd.city;
+        county = res.data.pcd.county;
+        provinceCode = res.data.pcd.provinceCode;
+        cityCode = res.data.pcd.cityCode;
+        adcode = res.data.pcd.countyCode;
     }
     try {
         await Statistics.create({
@@ -129,6 +126,9 @@ export async function statisticsCount(configId, userAgent, screen, width, height
             city,
             adcode,
             preViewUrl: pvl,
+            county,
+            provinceCode,
+            cityCode
         });
     } catch (error) {
         console.log('count.png', error, configId, userAgent, screen, width, height, referrer, url, vh, vc, vt, o, visitor, ip)
