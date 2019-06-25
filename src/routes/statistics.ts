@@ -23,7 +23,9 @@ router.get('/statistics/:id/count.png', async (ctx, next) => {
 
 router.get('/statistics/:id/count', async (ctx, next) => {
     const { id } = ctx.params;
-    const { screen, width, height, referrer, url, vh, vc, vt, o, userId, pvl, ip } = ctx.query;
+    let { screen, width, height, referrer, url, vh, vc, vt, o, userId, pvl, ip } = ctx.query;
+    url = decodeURIComponent(url);
+    pvl = decodeURIComponent(pvl);
     console.log(screen, width, height, referrer, url, vh, vc, vt, o, userId, pvl, ip);
     const userAgent = ctx.req.headers['user-agent'] || '未知';
     success(ctx, next, {}, '添加统计：' + id);
