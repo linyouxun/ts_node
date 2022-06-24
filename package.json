@@ -17,7 +17,7 @@
     "koa-router": "^7.4.0",
     "log4js": "^4.0.2",
     "mysql2": "^1.6.5",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^2.6.7",
     "nodemon": "^1.18.10",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^4.42.0",
